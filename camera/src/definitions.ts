@@ -318,6 +318,14 @@ export interface GalleryImageOptions {
    * @since 1.2.0
    */
   limit?: number;
+
+  /**
+   * Limit the available mime types in the gallery
+   * @default: ['image/jpeg', 'image/png']
+   *
+   * @since pre
+   */
+  mimeTypes?: string[];
 }
 
 export enum CameraSource {

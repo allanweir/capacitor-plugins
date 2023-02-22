@@ -1,5 +1,9 @@
 package com.capacitorjs.plugins.camera;
 
+import com.getcapacitor.JSArray;
+
+import org.json.JSONException;
+
 public class CameraSettings {
 
     public static final int DEFAULT_QUALITY = 90;
@@ -14,7 +18,10 @@ public class CameraSettings {
     private boolean allowEditing = false;
     private int width = 0;
     private int height = 0;
+    private int limit = 0;
     private CameraSource source = CameraSource.PROMPT;
+
+    private String[] mimeTypes = {"image/jpeg", "image/png"};
 
     public CameraResultType getResultType() {
         return resultType;
@@ -80,11 +87,27 @@ public class CameraSettings {
         this.height = height;
     }
 
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
     public CameraSource getSource() {
         return source;
     }
 
     public void setSource(CameraSource source) {
         this.source = source;
+    }
+
+    public String[] getMimeTypes() {
+        return mimeTypes;
+    }
+
+    public void setMimeTypes(JSArray mimeTypes) throws JSONException {
+        this.mimeTypes = (String[]) mimeTypes.toList().toArray();
     }
 }

@@ -104,7 +104,7 @@ public class CameraPlugin extends Plugin {
     @PluginMethod
     public void pickImages(PluginCall call) {
         settings = getSettings(call);
-        openPhotos(call, true, false);
+        openPhotos(call, settings.getLimit() != 1, false);
     }
 
     @PluginMethod
@@ -233,12 +233,19 @@ public class CameraPlugin extends Plugin {
         settings.setQuality(call.getInt("quality", CameraSettings.DEFAULT_QUALITY));
         settings.setWidth(call.getInt("width", 0));
         settings.setHeight(call.getInt("height", 0));
+        settings.setLimit(call.getInt("limit", 0));
+
         settings.setShouldResize(settings.getWidth() > 0 || settings.getHeight() > 0);
         settings.setShouldCorrectOrientation(call.getBoolean("correctOrientation", CameraSettings.DEFAULT_CORRECT_ORIENTATION));
         try {
             settings.setSource(CameraSource.valueOf(call.getString("source", CameraSource.PROMPT.getSource())));
         } catch (IllegalArgumentException ex) {
             settings.setSource(CameraSource.PROMPT);
+        }
+        try {
+            settings.setMimeTypes(call.getArray("mimeTypes", JSArray.from(new String[]{"image/jpeg", "image/png"})));
+        } catch (JSONException ex) {
+
         }
         return settings;
     }
@@ -288,10 +295,11 @@ public class CameraPlugin extends Plugin {
             Intent intent = new Intent(Intent.ACTION_PICK);
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
             intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, settings.getMimeTypes());
+
             try {
                 if (multiple) {
                     intent.putExtra("multi-pick", multiple);
-                    intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[] { "image/*" });
                     startActivityForResult(call, intent, "processPickedImages");
                 } else {
                     startActivityForResult(call, intent, "processPickedImage");
